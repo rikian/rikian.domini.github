@@ -88,8 +88,24 @@ papan.height = papan.scrollHeight;
 papan.addEventListener("dragover", dragOver);
 papan.addEventListener("drop", lemparKartu);
 
-// variable untuk menampung kartu pilihan pemain
+// variable global untuk menampung kartu pilihan pemain
 let kartuPilihanPemain;
+
+// variable untuk posisi kartu
+const sumbuX = 50;
+const sumbuY = 180;
+const lebar = 50;
+const tinggi = 30;
+
+// function untuk rotasi kartu
+function rotasiKartu(gambar, sumbuX, sumbuY, lebar, tinggi, rotasi) {
+  let radian = (rotasi * Math.PI) / 180;
+  context.translate(sumbuX + lebar / 2, sumbuY + tinggi / 2);
+  context.rotate(radian);
+  context.drawImage(gambar, (lebar / 2) * -1, (tinggi / 2) * -1, lebar, tinggi);
+  context.rotate(radian * -1);
+  context.translate((sumbuX + lebar / 2) * -1, (sumbuY + tinggi / 2) * -1);
+}
 
 // function pilih kartu
 function pilihKartu(e) {
@@ -100,10 +116,295 @@ function pilihKartu(e) {
 // function dragOver
 function dragOver(e) {
   e.preventDefault();
+  // console.log(e.offsetX);
 }
 
-//function drop
+// bantuan untuk pengali sumbu x dan y
+const xKiri = [];
+const xKanan = [];
+
+// untuk nilai kartu di papan
+const nilaiKiriPapan = document.querySelector(".nilaiKiri");
+const nilaiKananPapan = document.querySelector(".nilaiKanan");
+
+//function drop, atau jika kartu yang berada di atas papan dilepas
 function lemparKartu(e) {
   const gambar = dataKartu[kartuPilihanPemain].info;
-  context.drawImage(gambar, 400, 200, 70, 40);
+
+  //cek status giliran pemain, jika satu, berati boleh melempar kartu
+  if (pemain3.children[0].innerHTML === "1") {
+    //turn pertama
+    if (xKiri.length == 0 && xKanan.length == 0) {
+      rotasiKartu(gambar, 350 - sumbuX * xKiri.length, sumbuY, lebar, tinggi, 0);
+      // masukkan nilai kepapan
+      nilaiKiriPapan.innerHTML = dataKartu[kartuPilihanPemain].kiri;
+      nilaiKananPapan.innerHTML = dataKartu[kartuPilihanPemain].kanan;
+      //masukkan kartu yang dibung ke x kiri dan kanan
+      xKiri.push(gambar);
+      xKanan.push(gambar);
+      // ubah status pemain menjadi 0
+      pemain3.children[0].innerHTML = "0";
+      pemain3.children[0].style.backgroundColor = "red";
+      pemain3.children[1].innerHTML = kartuPilihanPemain;
+      // ubah target pemain
+      pemain4.children[0].innerHTML = "1";
+      pemain4.children[0].style.backgroundColor = "green";
+      // hilangkan kartu yang dibuang pemain
+      kartuPemain3[kartuPilihanPemain].style.display = "none";
+      delete kartuPemain3[kartuPilihanPemain];
+      return;
+    }
+
+    // cek posisi offset kartu
+    if (e.offsetX < 400) {
+      // turn ke dua dan selanjutnya
+      // cek pertama, nilai kartu kiri di papan dengan kartu kiri pemain
+      if (nilaiKiriPapan.innerHTML == dataKartu[kartuPilihanPemain].kiri) {
+        //cek pengali kiri
+        if (xKiri.length < 7) {
+          rotasiKartu(gambar, 350 - sumbuX * xKiri.length, sumbuY, lebar, tinggi, 180);
+        } else if (xKiri.length == 7) {
+          rotasiKartu(gambar, 350 - sumbuX * xKiri.length + 40, sumbuY - 40, lebar, tinggi, 270);
+        } else if (xKiri.length > 7) {
+          rotasiKartu(gambar, -350 + sumbuX * xKiri.length, sumbuY - 80, lebar, tinggi, 00);
+        }
+        // masukkan nilai ke papan
+        nilaiKiriPapan.innerHTML = dataKartu[kartuPilihanPemain].kanan;
+        //masukkan kartu yang dibung ke x kiri
+        xKiri.push(gambar);
+        // ubah status pemain menjadi 0
+        pemain3.children[0].innerHTML = "0";
+        pemain3.children[0].style.backgroundColor = "red";
+        pemain3.children[1].innerHTML = kartuPilihanPemain;
+        // ubah target pemain
+        pemain4.children[0].innerHTML = "1";
+        pemain4.children[0].style.backgroundColor = "green";
+        // hilangkan kartu yang dibuang pemain
+        kartuPemain3[kartuPilihanPemain].style.display = "none";
+        delete kartuPemain3[kartuPilihanPemain];
+        return;
+      }
+      // cek kedua, nilai kartu kiri di papan dengan kartu kanan pemain
+      else if (nilaiKiriPapan.innerHTML == dataKartu[kartuPilihanPemain].kanan) {
+        //cek pengali kiri
+        if (xKiri.length < 7) {
+          rotasiKartu(gambar, 350 - sumbuX * xKiri.length, sumbuY, lebar, tinggi, 0);
+        } else if (xKiri.length == 7) {
+          rotasiKartu(gambar, 350 - sumbuX * xKiri.length + 40, sumbuY - 40, lebar, tinggi, 90);
+        } else if (xKiri.length > 7) {
+          rotasiKartu(gambar, -350 + sumbuX * xKiri.length, sumbuY - 80, lebar, tinggi, 180);
+        }
+        // masukkan nilai kepapan
+        nilaiKiriPapan.innerHTML = dataKartu[kartuPilihanPemain].kiri;
+        //masukkan kartu yang dibung ke x kiri
+        xKiri.push(gambar);
+        // ubah status pemain menjadi 0
+        pemain3.children[0].innerHTML = "0";
+        pemain3.children[0].style.backgroundColor = "red";
+        pemain3.children[1].innerHTML = kartuPilihanPemain;
+        // ubah target pemain
+        pemain4.children[0].innerHTML = "1";
+        pemain4.children[0].style.backgroundColor = "green";
+        // hilangkan kartu yang dibuang pemain
+        kartuPemain3[kartuPilihanPemain].style.display = "none";
+        delete kartuPemain3[kartuPilihanPemain];
+        return;
+      }
+    } else if (e.offsetX >= 400) {
+      // cek ketiga, nilai kartu kanan di papan dengan kartu kiri pemain
+      if (nilaiKananPapan.innerHTML == dataKartu[kartuPilihanPemain].kiri) {
+        //cek pengali kanan
+        if (xKanan.length < 7) {
+          rotasiKartu(gambar, 350 + sumbuX * xKanan.length, sumbuY, lebar, tinggi, 0);
+        } else if (xKanan.length == 7) {
+          rotasiKartu(gambar, 350 + sumbuX * xKanan.length - 40, sumbuY + 40, lebar, tinggi, 90);
+        } else if (xKanan.length > 7) {
+          rotasiKartu(gambar, 1050 - lebar * xKanan.length, sumbuY + 80, lebar, tinggi, 180);
+        }
+        // masukkan nilai kepapan
+        nilaiKananPapan.innerHTML = dataKartu[kartuPilihanPemain].kanan;
+        //masukkan kartu yang dibung ke x kanan
+        xKanan.push(gambar);
+        // ubah status pemain menjadi 0
+        pemain3.children[0].innerHTML = "0";
+        pemain3.children[0].style.backgroundColor = "red";
+        pemain3.children[1].innerHTML = kartuPilihanPemain;
+        // ubah target pemain
+        pemain4.children[0].innerHTML = "1";
+        pemain4.children[0].style.backgroundColor = "green";
+        // hilangkan kartu yang dibuang pemain
+        kartuPemain3[kartuPilihanPemain].style.display = "none";
+        delete kartuPemain3[kartuPilihanPemain];
+        return;
+      }
+      // cek keempat, nilai kartu kanan di papan dengan kartu kanan pemain
+      else if (nilaiKananPapan.innerHTML == dataKartu[kartuPilihanPemain].kanan) {
+        //cek pengali kanan
+        if (xKanan.length < 7) {
+          rotasiKartu(gambar, 350 + sumbuX * xKanan.length, sumbuY, lebar, tinggi, 180);
+        } else if (xKanan.length == 7) {
+          rotasiKartu(gambar, 350 + sumbuX * xKanan.length - 40, sumbuY + 40, lebar, tinggi, 270);
+        } else if (xKanan.length > 7) {
+          rotasiKartu(gambar, 1050 - lebar * xKanan.length, sumbuY + 80, lebar, tinggi, 0);
+        }
+        // masukkan nilai kepapan
+        nilaiKananPapan.innerHTML = dataKartu[kartuPilihanPemain].kiri;
+        //masukkan kartu yang dibung ke x kanan
+        xKanan.push(gambar);
+        // ubah status pemain menjadi 0
+        pemain3.children[0].innerHTML = "0";
+        pemain3.children[0].style.backgroundColor = "red";
+        pemain3.children[1].innerHTML = kartuPilihanPemain;
+        // ubah target pemain
+        pemain4.children[0].innerHTML = "1";
+        pemain4.children[0].style.backgroundColor = "green";
+        // hilangkan kartu yang dibuang pemain
+        kartuPemain3[kartuPilihanPemain].style.display = "none";
+        delete kartuPemain3[kartuPilihanPemain];
+        return;
+      }
+    }
+  }
+}
+
+// bagian ke-tiga
+//button html
+const btnP4 = document.querySelector("#btnP4");
+const btnP1 = document.querySelector("#btnP1");
+const btnP2 = document.querySelector("#btnP2");
+
+btnP4.addEventListener("click", () => otomatisLempar(pemain4, pemain1, kartuPemain4));
+btnP1.addEventListener("click", () => otomatisLempar(pemain1, pemain2, kartuPemain1));
+btnP2.addEventListener("click", () => otomatisLempar(pemain2, pemain3, kartuPemain2));
+
+//function otomatis lempar pemain 4 1 2
+function otomatisLempar(pemain, targetPemain, kartuPemain) {
+  // cek status apakah sama dengan 1
+  if (pemain.children[0].innerHTML === "1") {
+    //cek ada atau tidak kartu yang sesuai dengan nilai di papan
+    for (let i = 0; i < Object.keys(kartuPemain).length; i++) {
+      kartuPilihanPemain = Object.keys(kartuPemain)[i];
+      const gambar = dataKartu[kartuPilihanPemain].info;
+      // turn ke dua dan selanjutnya
+      // cek pertama, nilai kartu kiri di papan dengan kartu kiri pemain 4
+      if (nilaiKiriPapan.innerHTML == dataKartu[kartuPilihanPemain].kiri) {
+        //cek pengali kiri
+        if (xKiri.length < 7) {
+          rotasiKartu(gambar, 350 - sumbuX * xKiri.length, sumbuY, lebar, tinggi, 180);
+        } else if (xKiri.length == 7) {
+          rotasiKartu(gambar, 350 - sumbuX * xKiri.length + 40, sumbuY - 40, lebar, tinggi, 270);
+        } else if (xKiri.length > 7) {
+          rotasiKartu(gambar, -350 + sumbuX * xKiri.length, sumbuY - 80, lebar, tinggi, 00);
+        }
+        // masukkan nilai ke papan
+        nilaiKiriPapan.innerHTML = dataKartu[kartuPilihanPemain].kanan;
+        //masukkan kartu yang dibung ke x kiri
+        xKiri.push(gambar);
+        // ubah status pemain menjadi 0
+        pemain.children[0].innerHTML = "0";
+        pemain.children[0].style.backgroundColor = "red";
+        pemain.children[1].innerHTML = kartuPilihanPemain;
+        // ubah target pemain
+        targetPemain.children[0].innerHTML = "1";
+        targetPemain.children[0].style.backgroundColor = "green";
+        // hilangkan kartu yang dibuang pemain
+        kartuPemain[kartuPilihanPemain].style.display = "none";
+        delete kartuPemain[kartuPilihanPemain];
+        // hentikan pencarian jika kartu yang sesuai ditemukan
+        break;
+      }
+      // cek kedua, nilai kartu kiri di papan dengan kartu kanan pemain
+      else if (nilaiKiriPapan.innerHTML == dataKartu[kartuPilihanPemain].kanan) {
+        //cek pengali kiri
+        if (xKiri.length < 7) {
+          rotasiKartu(gambar, 350 - sumbuX * xKiri.length, sumbuY, lebar, tinggi, 0);
+        } else if (xKiri.length == 7) {
+          rotasiKartu(gambar, 350 - sumbuX * xKiri.length + 40, sumbuY - 40, lebar, tinggi, 90);
+        } else if (xKiri.length > 7) {
+          rotasiKartu(gambar, -350 + sumbuX * xKiri.length, sumbuY - 80, lebar, tinggi, 180);
+        }
+        // masukkan nilai kepapan
+        nilaiKiriPapan.innerHTML = dataKartu[kartuPilihanPemain].kiri;
+        //masukkan kartu yang dibung ke x kiri
+        xKiri.push(gambar);
+        // ubah status pemain menjadi 0
+        pemain.children[0].innerHTML = "0";
+        pemain.children[0].style.backgroundColor = "red";
+        pemain.children[1].innerHTML = kartuPilihanPemain;
+        // ubah target pemain
+        targetPemain.children[0].innerHTML = "1";
+        targetPemain.children[0].style.backgroundColor = "green";
+        // hilangkan kartu yang dibuang pemain
+        kartuPemain[kartuPilihanPemain].style.display = "none";
+        delete kartuPemain[kartuPilihanPemain];
+        break;
+      }
+      // cek ketiga, nilai kartu kanan di papan dengan kartu kiri pemain
+      else if (nilaiKananPapan.innerHTML == dataKartu[kartuPilihanPemain].kiri) {
+        //cek pengali kanan
+        if (xKanan.length < 7) {
+          rotasiKartu(gambar, 350 + sumbuX * xKanan.length, sumbuY, lebar, tinggi, 0);
+        } else if (xKanan.length == 7) {
+          rotasiKartu(gambar, 350 + sumbuX * xKanan.length - 40, sumbuY + 40, lebar, tinggi, 90);
+        } else if (xKanan.length > 7) {
+          rotasiKartu(gambar, 1050 - lebar * xKanan.length, sumbuY + 80, lebar, tinggi, 180);
+        }
+        // masukkan nilai kepapan
+        nilaiKananPapan.innerHTML = dataKartu[kartuPilihanPemain].kanan;
+        //masukkan kartu yang dibung ke x kanan
+        xKanan.push(gambar);
+        // ubah status pemain menjadi 0
+        pemain.children[0].innerHTML = "0";
+        pemain.children[0].style.backgroundColor = "red";
+        pemain.children[1].innerHTML = kartuPilihanPemain;
+        // ubah target pemain
+        targetPemain.children[0].innerHTML = "1";
+        targetPemain.children[0].style.backgroundColor = "green";
+        // hilangkan kartu yang dibuang pemain
+        kartuPemain[kartuPilihanPemain].style.display = "none";
+        delete kartuPemain[kartuPilihanPemain];
+        break;
+      }
+      // cek keempat, nilai kartu kanan di papan dengan kartu kanan pemain
+      else if (nilaiKananPapan.innerHTML == dataKartu[kartuPilihanPemain].kanan) {
+        //cek pengali kanan
+        if (xKanan.length < 7) {
+          rotasiKartu(gambar, 350 + sumbuX * xKanan.length, sumbuY, lebar, tinggi, 180);
+        } else if (xKanan.length == 7) {
+          rotasiKartu(gambar, 350 + sumbuX * xKanan.length - 40, sumbuY + 40, lebar, tinggi, 270);
+        } else if (xKanan.length > 7) {
+          rotasiKartu(gambar, 1050 - lebar * xKanan.length, sumbuY + 80, lebar, tinggi, 0);
+        }
+        // masukkan nilai kepapan
+        nilaiKananPapan.innerHTML = dataKartu[kartuPilihanPemain].kiri;
+        //masukkan kartu yang dibung ke x kanan
+        xKanan.push(gambar);
+        // ubah status pemain menjadi 0
+        pemain.children[0].innerHTML = "0";
+        pemain.children[0].style.backgroundColor = "red";
+        pemain.children[1].innerHTML = kartuPilihanPemain;
+        // ubah target pemain
+        targetPemain.children[0].innerHTML = "1";
+        targetPemain.children[0].style.backgroundColor = "green";
+        // hilangkan kartu yang dibuang pemain
+        kartuPemain[kartuPilihanPemain].style.display = "none";
+        delete kartuPemain[kartuPilihanPemain];
+        break;
+      }
+      // jika tidak ada kartu yang sesuai
+      else if (i + 1 == Object.keys(kartuPemain).length) {
+        // ubah status pemain menjadi 0
+        pemain.children[0].innerHTML = "0";
+        pemain.children[0].style.backgroundColor = "red";
+        pemain.children[1].innerHTML = "lewat";
+        // ubah target pemain
+        targetPemain.children[0].innerHTML = "1";
+        targetPemain.children[0].style.backgroundColor = "green";
+        break;
+      }
+    }
+  } else {
+    console.log("ini bukan jalan anda.");
+    return;
+  }
 }
