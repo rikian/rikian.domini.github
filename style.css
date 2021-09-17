@@ -68,7 +68,7 @@
 /* element img yang ada di class pemain 1 */
 .pemain3 img {
   transform: rotate(90deg);
-  margin: -14px;
+  margin: -15px;
 }
 
 /* container 2 */
@@ -91,6 +91,11 @@
   justify-content: center;
 }
 
+/* img untuk pemain 4 */
+.pemain4 img {
+  margin: 1px;
+}
+
 /* pemain 2 */
 .pemain2 {
   width: 100px;
@@ -101,6 +106,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+/* img untuk pemain 4 */
+.pemain2 img {
+  margin: 1px;
 }
 
 /* papan gunakan tanda # untuk memanggil id */
@@ -144,4 +154,43 @@
 img {
   width: 70px;
   height: 40px;
+}
+
+/* modal menang */
+#menang {
+  display: none;
+  width: 200px;
+  height: 100px;
+  border: 1px solid black;
+  border-radius: 20px;
+  text-align: center;
+  background-color: chocolate;
+  position: fixed;
+  top: 300px;
+  left: 400px;
+  color: antiquewhite;
+}
+
+#mainLagi {
+  width: 80px;
+  height: 30px;
+  border-radius: 10px;
+  border: none;
+  background-color: blue;
+}
+
+/* button main */
+.mainAhh {
+  display: block;
+  width: 200px;
+  height: 50px;
+  border: 1px solid black;
+  border-radius: 20px;
+  text-align: center;
+  background-color: blueviolet;
+  position: fixed;
+  top: 300px;
+  left: 400px;
+  color: black;
+  font-size: 20px;
 }
