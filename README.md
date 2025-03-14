@@ -2,4 +2,4 @@ clone `git@github.com:rikian/rikian.domini.github.git` atau download code --> zi
 
 extrak file and run index.html
 
-by `rikian faisal` --> https://lawnsoor.com
+by `rikian faisal` --> https://rikianfaisal2.my.id/
